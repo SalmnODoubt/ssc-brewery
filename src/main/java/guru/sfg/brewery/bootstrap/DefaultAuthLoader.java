@@ -23,6 +23,7 @@ import guru.sfg.brewery.services.AuthorityService;
 import guru.sfg.brewery.services.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Component;
  */
 @RequiredArgsConstructor
 @Component
+@Log4j2
 public class DefaultAuthLoader implements CommandLineRunner {
   private final UserService userService;
   private final AuthorityService authorityService;
@@ -57,5 +59,7 @@ public class DefaultAuthLoader implements CommandLineRunner {
     User scott = User.builder().username("scott").password(passwordEncoder.encode("test3")).authority(customerAuthority).build();
 
     userService.saveUsers(List.of(spring, user, scott));
+
+    log.debug("Users created: " + userService.count());
   }
 }
