@@ -14,25 +14,38 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package guru.sfg.brewery;
+package guru.sfg.brewery.services;
 
-import guru.sfg.brewery.domain.security.Authority;
-import guru.sfg.brewery.domain.security.RoleEnum;
 import guru.sfg.brewery.domain.security.User;
-import guru.sfg.brewery.repositories.security.AuthorityRepository;
 import guru.sfg.brewery.repositories.security.UserRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@SpringBootApplication
-public class SfgBreweryUiApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(SfgBreweryUiApplication.class, args);
-    }
+@RequiredArgsConstructor
+@Service
+public class UserServiceImpl implements UserService{
 
+    private final UserRepository userRepository;
+
+  @Override
+  public User saveUser(User user) {
+    return userRepository.save(user);
+  }
+
+  @Override
+  public List<User> saveUsers(List<User> users) {
+    return userRepository.saveAll(users);
+  }
+
+  @Override
+  public Optional<User> findByUserName(String name) {
+    return userRepository.findByUsername(name);
+  }
+
+  @Override
+  public long count() {
+    return userRepository.count();
+  }
 }
-

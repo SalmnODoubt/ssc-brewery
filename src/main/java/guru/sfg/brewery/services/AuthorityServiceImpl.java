@@ -14,25 +14,28 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package guru.sfg.brewery;
+package guru.sfg.brewery.services;
 
 import guru.sfg.brewery.domain.security.Authority;
-import guru.sfg.brewery.domain.security.RoleEnum;
 import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.repositories.security.AuthorityRepository;
 import guru.sfg.brewery.repositories.security.UserRepository;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-@SpringBootApplication
-public class SfgBreweryUiApplication {
-    public static void main(String[] args) {
-      SpringApplication.run(SfgBreweryUiApplication.class, args);
-    }
+@RequiredArgsConstructor
+@Service
+public class AuthorityServiceImpl implements AuthorityService{
+  private final AuthorityRepository authorityRepository;
 
+  @Override
+  public Authority saveAuthority(Authority authority) {
+    return authorityRepository.save(authority);
+  }
+
+  @Override
+  public List<Authority> saveAuthorities(List<Authority> authorities) {
+    return authorityRepository.saveAll(authorities);
+  }
 }
-

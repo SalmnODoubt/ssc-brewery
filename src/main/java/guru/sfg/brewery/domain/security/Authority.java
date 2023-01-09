@@ -20,7 +20,7 @@ public class Authority {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private String role;
+    private RoleEnum role;
 
     @ManyToMany(mappedBy = "authorities")
     private Set<User> users;
