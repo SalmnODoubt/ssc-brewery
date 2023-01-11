@@ -30,18 +30,40 @@ public class UserDataLoader implements CommandLineRunner {
 
     private void loadSecurityData() {
         //beer auths
-        Authority createBeer = authorityRepository.save(Authority.builder().permission("beer.create").build());
-        Authority updateBeer = authorityRepository.save(Authority.builder().permission("beer.update").build());
-        Authority readBeer = authorityRepository.save(Authority.builder().permission("beer.read").build());
-        Authority deleteBeer = authorityRepository.save(Authority.builder().permission("beer.delete").build());
+      Authority createBeer = authorityRepository.save(Authority.builder().permission("beer.create").build());
+      Authority updateBeer = authorityRepository.save(Authority.builder().permission("beer.update").build());
+      Authority readBeer = authorityRepository.save(Authority.builder().permission("beer.read").build());
+      Authority deleteBeer = authorityRepository.save(Authority.builder().permission("beer.delete").build());
 
-        Role adminRole = roleRepository.save(Role.builder().name("ADMIN").build());
+      Authority createCustomer = authorityRepository.save(Authority.builder().permission("customer.create").build());
+      Authority updateCustomer = authorityRepository.save(Authority.builder().permission("customer.update").build());
+      Authority readCustomer = authorityRepository.save(Authority.builder().permission("customer.read").build());
+      Authority deleteCustomer = authorityRepository.save(Authority.builder().permission("customer.delete").build());
+
+      Authority createBrewry = authorityRepository.save(Authority.builder().permission("brewry.create").build());
+      Authority updateBrewry = authorityRepository.save(Authority.builder().permission("brewry.update").build());
+      Authority readBrewry = authorityRepository.save(Authority.builder().permission("brewry.read").build());
+      Authority deleteBrewry = authorityRepository.save(Authority.builder().permission("brewry.delete").build());
+
+      Role adminRole = roleRepository.save(Role.builder().name("ADMIN").build());
         Role customerRole = roleRepository.save(Role.builder().name("CUSTOMER").build());
         Role userRole = roleRepository.save(Role.builder().name("USER").build());
 
-        adminRole.setAuthorities(Set.of(createBeer, updateBeer, readBeer, deleteBeer));
+        adminRole.setAuthorities(Set.of(
+                createBeer,
+                updateBeer,
+                readBeer,
+                deleteBeer,
+                createCustomer,
+                updateCustomer,
+                readCustomer,
+                deleteCustomer,
+                createBrewry,
+                updateBrewry,
+                readBrewry,
+                deleteBrewry));
 
-        customerRole.setAuthorities(Set.of(readBeer));
+        customerRole.setAuthorities(Set.of(readBeer, readCustomer, readBrewry));
 
         userRole.setAuthorities(Set.of(readBeer));
 
