@@ -43,9 +43,7 @@ public class BeerOrderController {
         this.beerOrderService = beerOrderService;
     }
 
-    @PreAuthorize("hasAuthority('order.read') OR " +
-            "hasAuthority('customer.order.read') " +
-            " AND @beerOrderAuthenticationManger.customerIdMatches(authentication, #customerId )")
+    @PreAuthorize("@beerOrderAuthenticationManger.authorizeBeerRead(authentication, #customerId)")
     @GetMapping("orders")
     public BeerOrderPagedList listOrders(@PathVariable("customerId") UUID customerId,
                                          @RequestParam(value = "pageNumber", required = false) Integer pageNumber,
@@ -62,15 +60,14 @@ public class BeerOrderController {
         return beerOrderService.listOrders(customerId, PageRequest.of(pageNumber, pageSize));
     }
 
+  @PreAuthorize("@beerOrderAuthenticationManger.authorizeBeerCreate(authentication, #customerId, #beerOrderDto)")
     @PostMapping("orders")
     @ResponseStatus(HttpStatus.CREATED)
     public BeerOrderDto placeOrder(@PathVariable("customerId") UUID customerId, @RequestBody BeerOrderDto beerOrderDto){
         return beerOrderService.placeOrder(customerId, beerOrderDto);
     }
 
-    @PreAuthorize("hasAuthority('order.read') OR " +
-            "hasAuthority('customer.order.read') " +
-            " AND @beerOrderAuthenticationManger.customerIdMatches(authentication, #customerId )")
+    @PreAuthorize("@beerOrderAuthenticationManger.authorizeBeerRead(authentication, #customerId)")
     @GetMapping("orders/{orderId}")
     public BeerOrderDto getOrder(@PathVariable("customerId") UUID customerId, @PathVariable("orderId") UUID orderId){
         return beerOrderService.getOrderById(customerId, orderId);
