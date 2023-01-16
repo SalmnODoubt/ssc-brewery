@@ -1,6 +1,7 @@
 package guru.sfg.brewery.security;
 
 import guru.sfg.brewery.domain.security.User;
+import guru.sfg.brewery.web.model.BeerOrderDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -14,12 +15,18 @@ import java.util.UUID;
 @Component
 public class BeerOrderAuthenticationManger {
 
-    public boolean customerIdMatches(Authentication authentication, UUID customerId){
-        User authenticatedUser = (User) authentication.getPrincipal();
+  public boolean customerIdMatches(Authentication authentication, UUID customerId){
+    User authenticatedUser = (User) authentication.getPrincipal();
 
-        log.debug("Auth User Customer Id: " + authenticatedUser.getCustomer().getId() + " Customer Id:" + customerId);
+    log.debug("Auth User Customer Id: " + authenticatedUser.getCustomer().getId() + " Customer Id:" + customerId);
 
-        return authenticatedUser.getCustomer().getId().equals(customerId);
-    }
+    return authenticatedUser.getCustomer().getId().equals(customerId);
+  }
+
+  public boolean customerIdMatchesDto(Authentication authentication, BeerOrderDto beerOrderDto){
+    User authenticatedUser = (User) authentication.getPrincipal();
+
+    return authenticatedUser.getCustomer().getId().equals(beerOrderDto.getCustomerId());
+  }
 
 }
