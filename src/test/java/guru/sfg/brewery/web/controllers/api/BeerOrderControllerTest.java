@@ -12,10 +12,10 @@ import guru.sfg.brewery.web.controllers.BaseIT;
 import guru.sfg.brewery.web.model.BeerOrderDto;
 import guru.sfg.brewery.web.model.BeerOrderLineDto;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +26,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -188,24 +189,51 @@ class BeerOrderControllerTest extends BaseIT {
                 .andExpect(status().isForbidden());
     }
 
-    @Disabled
     @Test
-    void pickUpOrderNotAuth() {
+    void pickUpOrderNotAuth() throws Exception {
+      mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders" + UUID.randomUUID() + "pickup")
+                      .accept(MediaType.APPLICATION_JSON)
+                      .characterEncoding("UTF-8")
+                      .contentType(MediaType.APPLICATION_JSON)
+              )
+              .andExpect(status().isUnauthorized());
     }
 
-    @Disabled
+  @WithUserDetails("user")
     @Test
-    void pickUpOrderNotAdminUser() {
+    void pickUpOrderUser() throws Exception {
+      mockMvc.perform(put(API_ROOT + UUID.randomUUID() + "/orders/" + UUID.randomUUID() + "/pickup")
+                              .accept(MediaType.APPLICATION_JSON)
+                              .characterEncoding("UTF-8")
+                              .contentType(MediaType.APPLICATION_JSON)
+              )
+              .andExpect(status().isForbidden());
     }
 
-    @Disabled
-    @Test
-    void pickUpOrderCustomerUserAUTH() {
+  @WithUserDetails(DefaultBreweryLoader.STPETE_USER)
+  @Test
+    void pickUpOrderCustomerUserAUTH() throws Exception {
+      UUID orderId = beerOrderRepository.findAllByCustomer(stPeteCustomer, Pageable.unpaged()).stream().findFirst().orElseThrow().getId();
+
+      mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + orderId + "/pickup")
+                              .accept(MediaType.APPLICATION_JSON)
+                              .characterEncoding("UTF-8")
+                              .contentType(MediaType.APPLICATION_JSON)
+              )
+              .andExpect(status().isNoContent());
     }
 
-    @Disabled
+  @WithUserDetails(DefaultBreweryLoader.KEYWEST_USER)
     @Test
-    void pickUpOrderCustomerUserNOT_AUTH() {
+    void pickUpOrderCustomerUserNOT_AUTH() throws Exception {
+    UUID orderId = beerOrderRepository.findAllByCustomer(stPeteCustomer, Pageable.unpaged()).stream().findFirst().orElseThrow().getId();
+
+    mockMvc.perform(put(API_ROOT + stPeteCustomer.getId() + "/orders/" + orderId + "/pickup")
+                    .accept(MediaType.APPLICATION_JSON)
+                    .characterEncoding("UTF-8")
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isForbidden());
     }
 
     private BeerOrderDto buildOrderDto(Customer customer, UUID beerId) {
