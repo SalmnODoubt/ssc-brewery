@@ -1,9 +1,10 @@
 package guru.sfg.brewery.security.listeners;
 
 import guru.sfg.brewery.domain.security.LoginFailure;
-import guru.sfg.brewery.domain.security.LoginSuccess;
 import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.repositories.security.LoginFailureRepository;
+import guru.sfg.brewery.repositories.security.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class AuthenticationFailureListener {
 
   private final LoginFailureRepository loginFailureRepository;
+  private final UserRepository userRepository;
 
     @EventListener
     public void listen(AuthenticationFailureBadCredentialsEvent event){
@@ -37,13 +39,15 @@ public class AuthenticationFailureListener {
 
               builder.userName(userName);
 
-                log.debug("Attempted Username: " + userName);
-            } else if (token.getPrincipal() instanceof User) {
-              User user = (User) token.getPrincipal();
+                Optional<User> optionalUser = userRepository.findByUsername(userName);
 
-              builder.user(user);
+                if(optionalUser.isPresent()) {
+                  builder.user(optionalUser.get());
 
-              log.debug("Attempted Login using user: " + user.getUsername());
+                  log.debug("Attempted Login using user: " + userName);
+                } else {
+                  log.debug("Attempted Username: " + userName);
+                }
             }
 
             if(token.getDetails() instanceof WebAuthenticationDetails){
